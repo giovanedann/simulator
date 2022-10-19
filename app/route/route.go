@@ -10,7 +10,7 @@ import (
 
 type Route struct {
 	ID string `json:"routeId"`
-	ClientID string `json:"couteId"`
+	ClientID string `json:"clientId"`
 	Positions []Position `json:"position"`
 }
 
@@ -21,12 +21,12 @@ type Position struct {
 
 type PartialRoutePosition struct {
 	ID string `json:"routeId"`
-	ClientId string `json:"clientId"`
+	ClientID string `json:"clientId"`
 	Position []float64 `json:"position"`
 	Finished bool `json:"finished"`
 }
 
-func(r *Route) LoadPositions() error {
+func (r *Route) LoadPositions() error {
 	if r.ID == "" {
 		return errors.New("route id not informed")
 	}
@@ -53,7 +53,7 @@ func(r *Route) LoadPositions() error {
 
 		r.Positions = append(r.Positions, Position{
 			Lat: lat,
-			Long: long
+			Long: long,
 		})
 	}
 
@@ -68,8 +68,8 @@ func (r *Route) ExportJsonPositions() ([]string, error) {
 	for k, v := range r.Positions {
 		route.ID = r.ID
 		route.ClientID = r.ClientID
-		route.position = []float64{v.Lat, v.Long}
-		route.finished = false
+		route.Position = []float64{v.Lat, v.Long}
+		route.Finished = false
 		if total-1 == k {
 			route.Finished = true
 		}

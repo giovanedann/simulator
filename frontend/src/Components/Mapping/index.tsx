@@ -12,6 +12,7 @@ import { RouteExistsError } from '../../errors/route-exists'
 import { Route } from '../../interfaces/Route'
 import { getCurrentPosition } from '../../utils/geolocation'
 import { makeCarIcon, makeMarkerIcon, Map } from '../../utils/map'
+import Navbar from '../Navbar'
 import { styles } from './styles'
 
 const API_URL = import.meta.env.VITE_API_URL
@@ -98,6 +99,7 @@ function Mapping() {
   return (
     <Grid container className={classes.root}>
       <Grid item xs={12} sm={3}>
+        <Navbar />
         <form onSubmit={startRoute} className={classes.form}>
           <Select
             displayEmpty

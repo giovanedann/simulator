@@ -1,6 +1,5 @@
 import { Grid, Select, MenuItem, Button } from '@material-ui/core'
 import { Loader } from 'google-maps'
-import { useSnackbar } from 'notistack'
 import {
   ChangeEvent,
   FormEvent,
@@ -13,6 +12,7 @@ import { RouteExistsError } from '../../errors/route-exists'
 import { Route } from '../../interfaces/Route'
 import { getCurrentPosition } from '../../utils/geolocation'
 import { makeCarIcon, makeMarkerIcon, Map } from '../../utils/map'
+import { styles } from './styles'
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -34,8 +34,8 @@ const colors = [
 function Mapping() {
   const [routes, setRoutes] = useState<Route[]>([])
   const [selectedRouteId, setSelectedRouteId] = useState<string>('')
-  const { enqueueSnackbar } = useSnackbar()
   const mapRef = useRef<Map>()
+  const classes = styles()
 
   useEffect(() => {
     fetch(`${API_URL}/routes`)
@@ -86,19 +86,19 @@ function Mapping() {
         })
       } catch (error) {
         if (error instanceof RouteExistsError) {
-          enqueueSnackbar(`${route?.title} ja inicializado, aguardar finalizar`, {
-            variant: 'error',
-          })
-          return;
+          alert(`${route?.title} ja inicializado, aguardar finalizar`)
+          return
         }
-        throw error;
+        throw error
       }
-    }, [selectedRouteId, routes, enqueueSnackbar])
+    },
+    [selectedRouteId, routes]
+  )
 
   return (
-    <Grid container style={{ height: '100%' }}>
+    <Grid container className={classes.root}>
       <Grid item xs={12} sm={3}>
-        <form onSubmit={startRoute}>
+        <form onSubmit={startRoute} className={classes.form}>
           <Select
             displayEmpty
             fullWidth
@@ -114,13 +114,15 @@ function Mapping() {
               </MenuItem>
             ))}
           </Select>
-          <Button type="submit" color="primary" variant="contained">
-            Iniciar uma corrida
-          </Button>
+          <div className={classes.submitBtnWrapper}>
+            <Button type="submit" color="primary" variant="contained">
+              Iniciar uma corrida
+            </Button>
+          </div>
         </form>
       </Grid>
       <Grid item xs={12} sm={9}>
-        <div id="map"></div>
+        <div id="map" className={classes.map} />
       </Grid>
     </Grid>
   )

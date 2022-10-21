@@ -1,8 +1,12 @@
+import { MuiThemeProvider } from '@material-ui/core'
+import Mapping from './Components/Mapping'
+import theme from './styles/theme'
+
 function App() {
   return (
-    <div className="App">
-      <h1>Codelivery</h1>
-    </div>
+    <MuiThemeProvider theme={theme}>
+      <Mapping />
+    </MuiThemeProvider>
   )
 }
 

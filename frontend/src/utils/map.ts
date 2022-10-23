@@ -92,6 +92,10 @@ export class Map {
 
     this.map.fitBounds(bounds)
   }
+
+  moveCurrentMarker(routeId: string, position: google.maps.LatLngLiteral) {
+    this.routes[routeId].currentMarker.setPosition(position)
+  }
 }
 
 export const makeCarIcon = (color: string) => ({

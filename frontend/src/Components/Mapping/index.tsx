@@ -13,24 +13,11 @@ import { Route } from '../../interfaces/Route'
 import { getCurrentPosition } from '../../utils/geolocation'
 import { makeCarIcon, makeMarkerIcon, Map } from '../../utils/map'
 import Navbar from '../Navbar'
-import { styles } from './styles'
+import { styles, colors } from './styles'
 
 const API_URL = import.meta.env.VITE_API_URL
 
 const mapLoader = new Loader(import.meta.env.VITE_GOOGLE_API_KEY)
-
-const colors = [
-  '#b71c1c',
-  '#4a148c',
-  '#2e7d32',
-  '#e65100',
-  '#2962ff',
-  '#c2185b',
-  '#FFCD00',
-  '#3e2723',
-  '#03a9f4',
-  '#827717'
-]
 
 function Mapping() {
   const [routes, setRoutes] = useState<Route[]>([])

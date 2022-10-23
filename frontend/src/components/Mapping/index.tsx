@@ -15,6 +15,7 @@ import { getCurrentPosition } from '../../utils/geolocation'
 import { makeCarIcon, makeMarkerIcon, Map } from '../../utils/map'
 import Navbar from '../Navbar'
 import { styles, colors } from './styles'
+import { toast } from 'react-toastify'
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -28,7 +29,10 @@ function Mapping() {
   const classes = styles()
 
   const finishRoute = useCallback((route: IRoute) => {
-    alert(`${route.title} finalizou`)
+    toast(`${route.title} finalizou a rota!`, {
+      type: 'success',
+      position: 'bottom-left'
+    })
   }, [])
 
   useEffect(() => {
@@ -49,7 +53,9 @@ function Mapping() {
       })
 
       if (data.finished) {
-        const route = routes.find((route) => route._id === data.routeId) as IRoute;
+        const route = routes.find(
+          (route) => route._id === data.routeId
+        ) as IRoute
         finishRoute(route)
         mapRef.current?.removeRoute(route?._id)
       }
@@ -114,7 +120,10 @@ function Mapping() {
         })
       } catch (error) {
         if (error instanceof RouteExistsError) {
-          alert(`${route?.title} ja inicializado, aguardar finalizar`)
+          toast(`${route?.title} ja inicializado, aguardar finalizar`, {
+            type: 'warning',
+            position: 'bottom-left'
+          })
           return
         }
         throw error

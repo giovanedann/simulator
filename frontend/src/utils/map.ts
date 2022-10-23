@@ -52,6 +52,12 @@ export class Route {
       }
     )
   }
+
+  delete() {
+    this.currentMarker.setMap(null)
+    this.endMarker.setMap(null)
+    this.directionsRenderer.setMap(null)
+  }
 }
 
 export class Map {
@@ -95,6 +101,12 @@ export class Map {
 
   moveCurrentMarker(routeId: string, position: google.maps.LatLngLiteral) {
     this.routes[routeId].currentMarker.setPosition(position)
+  }
+
+  removeRoute(routeId: string) {
+    const route = this.routes[routeId]
+    route.delete()
+    delete this.routes[routeId]
   }
 }
 

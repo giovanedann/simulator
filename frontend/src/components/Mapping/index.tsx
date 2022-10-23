@@ -1,6 +1,6 @@
 import { Grid, Select, MenuItem, Button } from '@material-ui/core'
 import { Loader } from 'google-maps'
-import io from 'socket.io-client'
+import io, { Socket } from 'socket.io-client'
 import {
   ChangeEvent,
   FormEvent,
@@ -24,8 +24,15 @@ function Mapping() {
   const [routes, setRoutes] = useState<Route[]>([])
   const [selectedRouteId, setSelectedRouteId] = useState<string>('')
   const mapRef = useRef<Map>()
-  const socketIoRef = useRef<SocketIOClient.Socket>()
+  const socketIoRef = useRef<Socket>()
   const classes = styles()
+
+  useEffect(() => {
+    io(API_URL)
+    socketIoRef.current?.on('connect', () => {
+      console.log()
+    })
+  }, [])
 
   useEffect(() => {
     fetch(`${API_URL}/routes`)
@@ -73,6 +80,9 @@ function Mapping() {
             position: route?.endPosition,
             icon: makeMarkerIcon(iconColor)
           }
+        })
+        socketIoRef.current?.emit('new-direction', {
+          routeId: selectedRouteId
         })
       } catch (error) {
         if (error instanceof RouteExistsError) {

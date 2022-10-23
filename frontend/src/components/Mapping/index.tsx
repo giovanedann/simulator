@@ -33,7 +33,7 @@ function Mapping() {
       type: 'success',
       position: 'bottom-left'
     })
-  }, [])
+  }, [routes])
 
   useEffect(() => {
     if (!socketIoRef.current?.connected) {
@@ -53,9 +53,7 @@ function Mapping() {
       })
 
       if (data.finished) {
-        const route = routes.find(
-          (route) => route._id === data.routeId
-        ) as IRoute
+        const route = routes.find((route) => route._id === data.routeId) as IRoute
         finishRoute(route)
         mapRef.current?.removeRoute(route?._id)
       }

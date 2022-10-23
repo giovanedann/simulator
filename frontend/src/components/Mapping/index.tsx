@@ -49,8 +49,9 @@ function Mapping() {
       })
 
       if (data.finished) {
-        const route = routes.find((route) => route._id === data.routeId)
-        finishRoute(route as IRoute)
+        const route = routes.find((route) => route._id === data.routeId) as IRoute;
+        finishRoute(route)
+        mapRef.current?.removeRoute(route?._id)
       }
     }
 

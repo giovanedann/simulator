@@ -1,4 +1,4 @@
-import { RouteExistsError } from 'errors/route-exists'
+import { RouteExistsError } from '../errors/route-exists'
 
 export class Route {
   public currentMarker: google.maps.Marker

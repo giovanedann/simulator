@@ -1,5 +1,6 @@
 import { Grid, Select, MenuItem, Button } from '@material-ui/core'
 import { Loader } from 'google-maps'
+import io from 'socket.io-client'
 import {
   ChangeEvent,
   FormEvent,
@@ -8,10 +9,10 @@ import {
   useCallback,
   useRef
 } from 'react'
-import { RouteExistsError } from '../../errors/route-exists'
-import { Route } from '../../interfaces/Route'
-import { getCurrentPosition } from '../../utils/geolocation'
-import { makeCarIcon, makeMarkerIcon, Map } from '../../utils/map'
+import { RouteExistsError } from 'errors/route-exists'
+import { Route } from 'interfaces/Route'
+import { getCurrentPosition } from 'utils/geolocation'
+import { makeCarIcon, makeMarkerIcon, Map } from 'utils/map'
 import Navbar from '../Navbar'
 import { styles, colors } from './styles'
 
@@ -23,6 +24,7 @@ function Mapping() {
   const [routes, setRoutes] = useState<Route[]>([])
   const [selectedRouteId, setSelectedRouteId] = useState<string>('')
   const mapRef = useRef<Map>()
+  const socketIoRef = useRef<SocketIOClient.Socket>()
   const classes = styles()
 
   useEffect(() => {

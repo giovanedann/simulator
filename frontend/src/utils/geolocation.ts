@@ -1,4 +1,4 @@
-import { Position } from '../interfaces/Route'
+import { Position } from 'interfaces/Route'
 
 export function getCurrentPosition(
   options?: PositionOptions

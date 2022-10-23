@@ -1,7 +1,8 @@
-import { Inject, OnModuleInit } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { Producer as KafkaProducer } from '@nestjs/microservices/external/kafka.interface';
 import {
+  OnGatewayInit,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -9,7 +10,7 @@ import {
 import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway()
-export class RoutesGateway implements OnModuleInit {
+export class RoutesGateway implements OnGatewayInit {
   private kafkaProducer: KafkaProducer;
 
   @WebSocketServer()
@@ -20,7 +21,7 @@ export class RoutesGateway implements OnModuleInit {
     private kafkaClient: ClientKafka,
   ) {}
 
-  async onModuleInit() {
+  async afterInit() {
     this.kafkaProducer = await this.kafkaClient.connect();
   }
 
@@ -38,7 +39,7 @@ export class RoutesGateway implements OnModuleInit {
     });
   }
 
-  sendPosition(data: {
+  async sendPosition(data: {
     clientId: string;
     routeId: string;
     position: [number, number];
@@ -46,13 +47,15 @@ export class RoutesGateway implements OnModuleInit {
   }) {
     const { clientId, ...info } = data;
 
-    const clients = this.server.sockets.allSockets;
-    if (!(clientId in clients)) {
+    const clients = await this.server.sockets.fetchSockets();
+
+    if (!clients.map((client) => client.id).includes(clientId)) {
       console.error(
-        'Client not exists, refresh React Application and resend new direction again.',
+        'Client does not exists, refresh React Application and resend new direction again.',
       );
       return;
     }
-    clients[clientId].emit('new-position', info);
+
+    clients.find((client) => client.id === clientId).emit('new-position', info);
   }
 }

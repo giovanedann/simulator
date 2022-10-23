@@ -29,7 +29,7 @@ function Mapping() {
   const classes = styles()
 
   const finishRoute = useCallback((route: IRoute) => {
-    toast(`${route.title} finalizou a rota!`, {
+    toast(`${route?.title} finalizou a rota!`, {
       type: 'success',
       position: 'bottom-left'
     })

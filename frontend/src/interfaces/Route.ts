@@ -1,11 +1,17 @@
-export interface Position {
+export interface IPosition {
   lat: number
   lng: number
 }
 
-export interface Route {
+export interface INewPositionData {
+  routeId: string
+  position: [number, number]
+  finished: boolean
+}
+
+export interface IRoute {
   _id: string
   title: string
-  startPosition: Position
-  endPosition: Position
+  startPosition: IPosition
+  endPosition: IPosition
 }

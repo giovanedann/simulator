@@ -1,6 +1,6 @@
 import { Grid, Select, MenuItem, Button } from '@material-ui/core'
 import { Loader } from 'google-maps'
-import io, { Socket } from 'socket.io-client'
+import { io, Socket } from 'socket.io-client'
 import {
   ChangeEvent,
   FormEvent,
@@ -9,10 +9,10 @@ import {
   useCallback,
   useRef
 } from 'react'
-import { RouteExistsError } from 'errors/route-exists'
-import { Route } from 'interfaces/Route'
-import { getCurrentPosition } from 'utils/geolocation'
-import { makeCarIcon, makeMarkerIcon, Map } from 'utils/map'
+import { RouteExistsError } from '../../errors/route-exists'
+import { INewPositionData, IRoute } from '../../interfaces/Route'
+import { getCurrentPosition } from '../../utils/geolocation'
+import { makeCarIcon, makeMarkerIcon, Map } from '../../utils/map'
 import Navbar from '../Navbar'
 import { styles, colors } from './styles'
 
@@ -21,18 +21,45 @@ const API_URL = import.meta.env.VITE_API_URL
 const mapLoader = new Loader(import.meta.env.VITE_GOOGLE_API_KEY)
 
 function Mapping() {
-  const [routes, setRoutes] = useState<Route[]>([])
+  const [routes, setRoutes] = useState<IRoute[]>([])
   const [selectedRouteId, setSelectedRouteId] = useState<string>('')
   const mapRef = useRef<Map>()
   const socketIoRef = useRef<Socket>()
   const classes = styles()
 
-  useEffect(() => {
-    io(API_URL)
-    socketIoRef.current?.on('connect', () => {
-      console.log()
-    })
+  const finishRoute = useCallback((route: IRoute) => {
+    alert(`${route.title} finalizou`)
   }, [])
+
+  useEffect(() => {
+    if (!socketIoRef.current?.connected) {
+      socketIoRef.current = io(API_URL, {
+        transports: ['websocket', 'polling', 'flashsocket']
+      })
+
+      socketIoRef.current?.on('connect', () => {
+        console.log('connected')
+      })
+    }
+
+    const handler = (data: INewPositionData) => {
+      mapRef.current?.moveCurrentMarker(data.routeId, {
+        lat: data.position[0],
+        lng: data.position[1]
+      })
+
+      if (data.finished) {
+        const route = routes.find((route) => route._id === data.routeId)
+        finishRoute(route as IRoute)
+      }
+    }
+
+    socketIoRef.current?.on('new-position', handler)
+
+    return () => {
+      socketIoRef.current?.off('new-position', handler)
+    }
+  }, [finishRoute])
 
   useEffect(() => {
     fetch(`${API_URL}/routes`)

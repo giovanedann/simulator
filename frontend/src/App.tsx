@@ -1,5 +1,5 @@
 import { CssBaseline, MuiThemeProvider } from '@material-ui/core'
-import Mapping from './Components/Mapping'
+import Mapping from './components/Mapping'
 import theme from './styles/theme'
 
 function App() {
